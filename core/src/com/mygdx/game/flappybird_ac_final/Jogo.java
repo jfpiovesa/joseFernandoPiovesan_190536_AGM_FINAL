@@ -43,8 +43,9 @@ public class Jogo extends ApplicationAdapter {
     private int pontos = 0;// var de pontos
     private int gravidade = 0;// var de gravidade
     private int estadojogo = 0;// var de estado do jogo
-    private int moedapravalor = 0;
-    int valor = 1;
+    private int moedapravalor = 0; // valor da moeda de prata para que a de ouro apareça
+    int valor = 1;// valor para que soa pareca o logo uma vez
+    int valortoque = 0;// valor para que toque mais de umna vez na tela no estado  2
 
     private float variacao = 0; // variação da animação
     private float posicaoInicialVerticalPassaro = 0;// posição do passaro  na vertical
@@ -146,10 +147,9 @@ public class Jogo extends ApplicationAdapter {
         // pegando texturas do cano
         canoAlto = new Texture("cano_topo_maior.png");
         canoBaixo = new Texture("cano_baixo_maior.png");
-
+        // pegando texturas dos objetos
         moedaOuro = new Texture("coin_gold.png");
         moedaPrata = new Texture("coin_sinlver.png");
-
         GameOver = new Texture("game_over.png");
         logo = new Texture("bird go.png");
         black = new Texture("black.png");
@@ -179,13 +179,13 @@ public class Jogo extends ApplicationAdapter {
         retaguloCanoCima.set(posicaoCanoHorizontal, alturadispositivo / 2 + espacoEntreCanos / 2 + posicaoCanoVertical, canoAlto.getWidth(), canoAlto.getHeight());// pondo colisão nos canos
 
         ciculoMoedaPrata.set(posicaoMOedaPrata, alturadispositivo /2 + posicaomoedavetical + moedaPrata.getHeight() / 2f,
-                moedaPrata.getWidth() / 2f);
+                moedaPrata.getWidth() / 2f); //pondo colisão nos moedas
 
         ciculoMoedaOuro.set(posicaoMOedaouro, alturadispositivo /2 + posicaomoedavetical + moedaOuro.getHeight() / 2f,
-                moedaOuro.getWidth() / 2f);
+                moedaOuro.getWidth() / 2f);//pondo colisão nos moedas
 
-        boolean beteumoedaOuro = Intersector.overlaps(circuloPassaro, ciculoMoedaOuro);
-        boolean beteumoedaPrata = Intersector.overlaps(circuloPassaro, ciculoMoedaPrata);
+        boolean beteumoedaOuro = Intersector.overlaps(circuloPassaro, ciculoMoedaOuro);// verificando a colisão entre moeda ouro e passaro
+        boolean beteumoedaPrata = Intersector.overlaps(circuloPassaro, ciculoMoedaPrata);// verificando a colisão entre moeda prata e passaro
         boolean bateuCanoCima = Intersector.overlaps(circuloPassaro, retaguloCanoCima);// verificando a colisão entre cano e passaro
         boolean bateuCanoBaixo = Intersector.overlaps(circuloPassaro, retanguloBaixo);// verificando a colisão entre cano e passaro
         if (bateuCanoBaixo || bateuCanoCima) {
@@ -196,6 +196,7 @@ public class Jogo extends ApplicationAdapter {
                 variacao = 3;
             }
         }
+        // se bateu na moeda de ouro , se for estado 1, ganha 10 pontos e dispara son da moeda, volta pro final da tela
         if (beteumoedaOuro) {
             if (estadojogo == 1) {
                 pontos += 10;
@@ -205,6 +206,8 @@ public class Jogo extends ApplicationAdapter {
 
             }
         }
+
+        // se bateu na moeda de prata , se for estado 1, ganha 5 pontos e dispara son da moeda, volta pro final da tela
         if (beteumoedaPrata) {
 
             if (estadojogo == 1) {
@@ -262,13 +265,16 @@ public class Jogo extends ApplicationAdapter {
                 posicaoCanoVertical = random.nextInt(400) - 200;// posição vertical fica randomicamente mudando de valores
                 passouCano = false;
             }
+            // faz que se mova moeda de prata, e se a moeda chegar começo da tela,ela volta pro filnal
             posicaoMOedaPrata -= Gdx.graphics.getDeltaTime() * 150;
             if (posicaoMOedaPrata < -moedaPrata.getWidth()) {
                 posicaoMOedaPrata = larguradispositivo;
                 posicaomoedavetical = random.nextInt(300) - 200;
 
             }
-            if (moedapravalor >= 5) {
+            // se o valor da moeda de prata for x , faz que se mova moeda de prata, e se a moeda chegar começo da tela,ela volta pro filnal
+
+            if (moedapravalor >= 4) {
                 posicaoMOedaouro -= Gdx.graphics.getDeltaTime() * 150;
                 if (posicaoMOedaouro < -moedaOuro.getWidth()) {
                     posicaoMOedaouro = larguradispositivo;
@@ -293,19 +299,29 @@ public class Jogo extends ApplicationAdapter {
                 preferencias.putInteger("pontuacaoMaxima", pontuacaoMaxima);
             }
 
-            posicaoHorizontalPassaro -= Gdx.graphics.getDeltaTime() * 500; // efeito de colisãp quando acontecer
+            posicaoInicialVerticalPassaro -= Gdx.graphics.getDeltaTime() * 500; // efeito de colisãp quando acontecer
 
-            if (toqueTela) // se tocou na tela, reseta o estado do jogo como pontuação, posição do passaro e canos
+
+            if (toqueTela)//pra que some quando ttoca na tela
             {
-                estadojogo = 0;// estado do jogo
-                pontos = 0;// pontos
-                gravidade = 0;// garvidade
-                posicaoHorizontalPassaro = 0;
-                posicaoInicialVerticalPassaro = alturadispositivo / 2;
-                posicaoCanoHorizontal = larguradispositivo;
-                posicaoMOedaouro = larguradispositivo;
-                posicaoMOedaPrata = larguradispositivo;
-                moedapravalor = 0;
+                valortoque ++;
+            }
+
+            if (toqueTela && valortoque == 1) // se tocou na tela duas vezes, reseta o estado do jogo como pontuação, posição do passaro e canos
+            {
+
+                    estadojogo = 0;// estado do jogo
+                    pontos = 0;// pontos
+                    gravidade = 0;// garvidade
+                    posicaoHorizontalPassaro = 0;
+                    posicaoInicialVerticalPassaro = alturadispositivo / 2;
+                    posicaoCanoHorizontal = larguradispositivo;//posição  cano de cano igual largura do dispositivo
+                    posicaoMOedaouro = larguradispositivo;//posição  moeda ouro de cano igual largura do dispositivo
+                    posicaoMOedaPrata = larguradispositivo;//posição  moeda prata de cano igual largura do dispositivo
+                    moedapravalor = 0; // valor da moeda de pra zera
+                    valortoque = 0; // toque zera
+
+
             }
         }
 
@@ -316,6 +332,8 @@ public class Jogo extends ApplicationAdapter {
         batch.begin();// coemeçando
 
         batch.draw(fundo, 0, 0, larguradispositivo, alturadispositivo);// rederizando o fundo do game na cena
+        //se o estado  igual a 0 e um valor pra não aprecer novamente
+        // renderiza a logo e o fundo preto
        if (estadojogo == 0 && valor == 1 )
         {
             batch.draw(logo,posicaoHorizontalPassaro,alturadispositivo /4,1200,800);
@@ -326,19 +344,22 @@ public class Jogo extends ApplicationAdapter {
         batch.draw(passaros[(int) variacao], 50 + posicaoHorizontalPassaro, posicaoInicialVerticalPassaro);// rederizando o passaro na cena
         batch.draw(canoBaixo, posicaoCanoHorizontal, alturadispositivo / 2 - canoBaixo.getHeight() - espacoEntreCanos / 2 + posicaoCanoVertical);//renderizando cano na cena e calculando conforme o tamanho da tela
         batch.draw(canoAlto, posicaoCanoHorizontal, alturadispositivo / 2 + espacoEntreCanos / 2 + posicaoCanoVertical);//renderizando cano na cena e calculando conforme o tamanho da tela
-        textPontuacao.draw(batch, String.valueOf(pontos), larguradispositivo / 2, alturadispositivo - 100);// renderizando os pontos na tela  cada vez que passar entre os canos
 
-
-        if (moedapravalor <= 5) {
+        // se  valor da moeda de prata for menor que 5 ela renderiza
+        if (moedapravalor <= 4) {
 
             batch.draw(moedaPrata, posicaoMOedaPrata, alturadispositivo /2 + posicaomoedavetical + moedaPrata.getHeight() / 2f);
         }
-
-        if (moedapravalor >= 5) {
+        // se valor da moeda de prata for maior que 5 rendezira a moeda de ouro
+        if (moedapravalor >= 4) {
 
                 batch.draw(moedaOuro, posicaoMOedaouro, alturadispositivo /2 + posicaomoedavetical + moedaOuro.getHeight() / 2f);
 
 
+        }
+        if(estadojogo == 1)
+        {
+            textPontuacao.draw(batch, String.valueOf(pontos), larguradispositivo / 2, alturadispositivo - 100);// renderizando os pontos na tela  cada vez que passar entre os canos
         }
         // se o estado do jogo for  2 renderiza na tela a pngs  na tela dando infomação sobre o estatus que jogo se encotra
         if (estadojogo == 2) {
