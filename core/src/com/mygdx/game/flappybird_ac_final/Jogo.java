@@ -38,6 +38,8 @@ public class Jogo extends ApplicationAdapter {
     private boolean passouCano = false;//  virificar se passou pelo cano se verdadeiro ou falso
 
     private Random random;// var para random
+    private Random randomValorMoeda;
+
 
     private int pontuacaoMaxima = 0;
     private int pontos = 0;// var de pontos
@@ -46,6 +48,7 @@ public class Jogo extends ApplicationAdapter {
     private int moedapravalor = 0; // valor da moeda de prata para que a de ouro apareça
     int valor = 1;// valor para que soa pareca o logo uma vez
     int valortoque = 0;// valor para que toque mais de umna vez na tela no estado  2
+     private int valorRadomTest = 3;
 
     private float variacao = 0; // variação da animação
     private float posicaoInicialVerticalPassaro = 0;// posição do passaro  na vertical
@@ -90,6 +93,7 @@ public class Jogo extends ApplicationAdapter {
 
         batch = new SpriteBatch();
         random = new Random();//random
+        randomValorMoeda = new Random();
 
 
         alturadispositivo = Gdx.graphics.getHeight();// declarando que altura e e a mesma do dispositivo
@@ -203,7 +207,7 @@ public class Jogo extends ApplicationAdapter {
                 moedapravalor = 0;
                 somMoedas.play();
                 posicaoMOedaouro = larguradispositivo;
-
+                valorRadomTest = randomValorMoeda.nextInt(10) +1;
             }
         }
 
@@ -255,6 +259,7 @@ public class Jogo extends ApplicationAdapter {
         // estado do jogo  1 ativa gravidade e dispara som de voando, e faz que o cano comece a se movimentar,
         else if (estadojogo == 1) {
             valor = 0;
+
             if (toqueTela) {
                 gravidade = -15;
                 somVoando.play();
@@ -274,12 +279,13 @@ public class Jogo extends ApplicationAdapter {
             }
             // se o valor da moeda de prata for x , faz que se mova moeda de prata, e se a moeda chegar começo da tela,ela volta pro filnal
 
-            if (moedapravalor >= 4) {
+            if (moedapravalor >= valorRadomTest) {
                 posicaoMOedaouro -= Gdx.graphics.getDeltaTime() * 150;
                 if (posicaoMOedaouro < -moedaOuro.getWidth()) {
                     posicaoMOedaouro = larguradispositivo;
                     posicaomoedavetical = random.nextInt(300) - 200;
                     moedapravalor = 0;
+                    valorRadomTest = randomValorMoeda.nextInt(10) +1; // radom para que a moeda de ouro apareça forma radomica
                 }
             }
 
@@ -345,13 +351,13 @@ public class Jogo extends ApplicationAdapter {
         batch.draw(canoBaixo, posicaoCanoHorizontal, alturadispositivo / 2 - canoBaixo.getHeight() - espacoEntreCanos / 2 + posicaoCanoVertical);//renderizando cano na cena e calculando conforme o tamanho da tela
         batch.draw(canoAlto, posicaoCanoHorizontal, alturadispositivo / 2 + espacoEntreCanos / 2 + posicaoCanoVertical);//renderizando cano na cena e calculando conforme o tamanho da tela
 
-        // se  valor da moeda de prata for menor que 5 ela renderiza
-        if (moedapravalor <= 4) {
+        // se  valor da moeda de prata for menor que x ela renderiza
+        if (moedapravalor <= valorRadomTest) {
 
             batch.draw(moedaPrata, posicaoMOedaPrata, alturadispositivo /2 + posicaomoedavetical + moedaPrata.getHeight() / 2f);
         }
-        // se valor da moeda de prata for maior que 5 rendezira a moeda de ouro
-        if (moedapravalor >= 4) {
+        // se valor da moeda de prata for maior que x, rendezira a moeda de ouro
+        if (moedapravalor >= valorRadomTest) {
 
                 batch.draw(moedaOuro, posicaoMOedaouro, alturadispositivo /2 + posicaomoedavetical + moedaOuro.getHeight() / 2f);
 
